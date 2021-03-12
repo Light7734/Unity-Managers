@@ -3,18 +3,20 @@
 
 ## Features
 #### Current Features:
-* A barebone AudioManager
-* AudioEmitter &amp; AudioEmitterST
+* AudioPlayer, AudioEmitter, AudioSourcePool
+* SingletonManager ( initializes the singletons with a bootstrap function )
+* SceneManager
 #### Features to come:
-* GameAssets manager
+* Improved AudioPlayer/Emitter/SourcePool
+* Improved SingletonManager
+* Improved SceneManager
 * Animations manager
-* Scene manager
 * And more...
 
 ## Getting Started
 ### Prerequisites
 What you  need before using the project:
-* Preferably Unity Editor's [*LTS Release 2019.4.21f1*](https://unity3d.com/unity/qa/lts-releases) or later
+* Preferably Unity Editor's [*LTS Release 2019.4.22f1*](https://unity3d.com/unity/qa/lts-releases) or later
 * A Basic understanding of Unity Engine
 * An Intermediate understanding of C#
 * Hands :3
