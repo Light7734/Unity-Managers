@@ -10,7 +10,34 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7422ba1b4088504ab7c15c6301924d5, type: 3}
-  m_Name: PlayerAudioEmitter
+  m_Name: PlayerAudioPlayer
   m_EditorClassIdentifier: 
-  events:
-  - {fileID: 11400000, guid: eab16bb2228855f48a7e3bac014a6436, type: 2}
+  emitters:
+    reorderableList:
+      canAdd: 1
+      canRemove: 1
+      draggable: 1
+      expandable: 1
+      multipleSelection: 1
+      isExpanded: 1
+      label:
+        m_Text: Keys
+        m_Image: {fileID: 0}
+        m_Tooltip: 
+      headerHeight: 18
+      footerHeight: 13
+      slideEasing: 0.15
+      verticalSpacing: 2
+      showDefaultBackground: 1
+      elementDisplayType: 0
+      elementNameProperty: 
+      elementNameOverride: 
+      elementIcon: {fileID: 0}
+    reqReferences: {fileID: 0}
+    isExpanded: 1
+    _keyValues:
+    - crystal
+    _keys:
+    - crystal
+    _values:
+    - {fileID: 11400000, guid: 542d30653d4ad1447a1b7788f8ea0157, type: 2}

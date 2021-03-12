@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
-  m_Name: BasicEmitter
+  m_Name: PlayerAudioEmitter_CrystalDrop
   m_EditorClassIdentifier: Assembly-CSharp::BasicAudioEmitter
-  clip: {fileID: 0}
+  clip: {fileID: 8300000, guid: ced30ef0f0b17d441ab34a1b623635a1, type: 3}

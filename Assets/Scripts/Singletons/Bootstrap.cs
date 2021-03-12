@@ -23,7 +23,5 @@ class SingletonManager
             Debug.LogError(output);
             Application.Quit();
         }
-        else
-            Debug.Log(Time.time);
     }
 }
