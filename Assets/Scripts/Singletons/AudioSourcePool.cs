@@ -5,19 +5,35 @@ public class AudioSourcePool
     private static AudioSourcePool instance = null;
 
     GameObject poolGameObject = new GameObject("AudioSourcePool");
-    GameObject[] gameObjects = new GameObject[32];
-    AudioSource[] audioSources = new AudioSource[32];
+
+    // SoundTracks
+    GameObject[] gameObjectsST = new GameObject[4];
+    AudioSource[] audioSourcesST = new AudioSource[4];
+
+    // SFX
+    GameObject[] gameObjects = new GameObject[28];
+    AudioSource[] audioSources = new AudioSource[28];
 
     private AudioSourcePool()
     {
         GameObject.DontDestroyOnLoad(poolGameObject);
 
-        for (int i = 0; i < 32; i++)
+        // SoundTrack
+        for (int i = 0; i < 4; i++)
+        {
+            gameObjectsST[i] = new GameObject("AudioSourceST" + i);
+            gameObjectsST[i].transform.parent = poolGameObject.transform;
+
+            audioSourcesST[i] = gameObjectsST[i].AddComponent<AudioSource>();
+            audioSourcesST[i].playOnAwake = false;
+            audioSourcesST[i].loop = true;
+        }
+
+        // SFX
+        for (int i = 0; i < 28; i++)
         {
             gameObjects[i] = new GameObject("AudioSource" + i);
             gameObjects[i].transform.parent = poolGameObject.transform;
-
-            GameObject.DontDestroyOnLoad(gameObjects[i]);
 
             audioSources[i] = gameObjects[i].AddComponent<AudioSource>();
             audioSources[i].playOnAwake = false;
@@ -38,17 +54,30 @@ public class AudioSourcePool
         return null;
     }
 
+    public static AudioSource GetAudioSourceST()
+    {
+        for (int i = 0; i < 4; i++)
+            if (!instance.audioSourcesST[i].isPlaying)
+                return instance.audioSourcesST[i];
+
+        Debug.LogWarning("AudioSource::GetAudioSourceST: No free audio source");
+        return null;
+    }
+
     public static void RecollectChildren(Transform trasnform)
     {
-        for (int i = 0; i < 32; i++)
+        for (int i = 0; i < 28; i++)
             if (instance.gameObjects[i].transform.parent == trasnform)
                 instance.gameObjects[i].transform.parent = instance.poolGameObject.transform;
     }
 
     public static void PrepareForSceneChange()
     {
-        for (int i = 0; i < 32; i++)
+        for (int i = 0; i < 28; i++)
+        {
+            instance.audioSources[i].Stop();
             instance.gameObjects[i].transform.parent = instance.poolGameObject.transform;
+        }
     }
 
     public static bool Init()
