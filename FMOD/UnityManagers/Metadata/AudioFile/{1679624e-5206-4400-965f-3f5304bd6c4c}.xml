@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.01.00">
+	<object class="AudioFile" id="{1679624e-5206-4400-965f-3f5304bd6c4c}">
+		<property name="assetPath">
+			<value>SFX/Coin7.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>1</value>
+		</property>
+		<property name="length">
+			<value>0.50108843537414971</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{a0e1c266-aae4-40d2-9784-43d07fad31be}</destination>
+		</relationship>
+	</object>
+</objects>

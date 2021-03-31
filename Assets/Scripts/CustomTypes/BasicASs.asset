@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: BasicASs
+  m_EditorClassIdentifier: Assembly-CSharp::BasicAudioEmitter
+  clip: {fileID: 8300000, guid: 7cd039203b2fb6946b060d92fbb601df, type: 3}
+  volume:
+    min: 0.31772572
+    max: 1
+  pitch:
+    min: 0.4581939
+    max: 1

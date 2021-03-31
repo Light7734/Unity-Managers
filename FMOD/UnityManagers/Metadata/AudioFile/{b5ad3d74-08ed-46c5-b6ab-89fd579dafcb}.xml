@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.01.00">
+	<object class="AudioFile" id="{b5ad3d74-08ed-46c5-b6ab-89fd579dafcb}">
+		<property name="assetPath">
+			<value>SFX/Button/unhover.ogg</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>0.069047619047619052</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{a0e1c266-aae4-40d2-9784-43d07fad31be}</destination>
+		</relationship>
+	</object>
+</objects>

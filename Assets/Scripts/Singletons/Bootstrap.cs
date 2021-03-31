@@ -8,9 +8,9 @@ class SingletonManager
         string output = "";
         bool failed = false;
 
-        if (!AudioSourcePool.Init())
+        if(!SceneManager.Init())
         {
-            output += "[SingletonManager.Bootstrap]: AudioSourcePool.Init failed";
+            output += "[SingletonManager.Bootstrap]: SceneManager.Init failed\n";
             failed = true;
         }
         

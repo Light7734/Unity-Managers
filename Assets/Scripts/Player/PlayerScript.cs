@@ -1,43 +1,46 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerScript : MonoBehaviour
 {
-    public BasicAudioEmitter sfx1;
-    public BasicAudioEmitter sfx2;
-    public CompositeAudioEmitter sfx3;
+    public AudioEmitterFX sfxEmitter;
+    public AudioEmitterST musicEmitter;
 
-    public BasicAudioEmitterST piano;
+    public Slider slider;
+
+    private void Start()
+    {
+        slider.minValue = 0f;
+        slider.maxValue = musicEmitter["music"].GetLength();
+    }
 
     private void Update()
     {
         if (Input.GetKey(KeyCode.Q))
             SceneManager.LoadNextScene();
+
+        slider.value = musicEmitter["music"].GetTimelinePosition();
     }
 
-    public void OnMusicButtons(string btn)
+    public void OnPlayButton()
     {
-        if (btn == "play")
-            piano.Play();
-
-        if (btn == "pause")
-            piano.Pause(true);
-
-        if (btn == "stop")
-            piano.Stop();
+        musicEmitter["music"].Pause();
     }
 
     public void OnSFXButtons(string btn)
     {
         if (btn == "1")
-            sfx1.Play(transform);
+            sfxEmitter["sfx1"].Start();
         if (btn == "2")
-            sfx2.Play(transform);
+            sfxEmitter["sfx2"].Start();
         if (btn == "3")
-            sfx3.Play(transform);
+            sfxEmitter["sfx3"].Start();
     }
 
-    private void OnDestroy()
+    public void OnSlider(float v)
     {
-        AudioSourcePool.RecollectChildren(transform);
+        if ((int)v != musicEmitter["music"].GetTimelinePosition())
+            musicEmitter["music"].SetTimelinePosition((int)v);
     }
+
 }
