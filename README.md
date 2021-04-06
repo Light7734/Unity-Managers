@@ -2,7 +2,7 @@
 
 ## Features
 #### Current Features:
-* AudioEmitters using FMOD:
+* AudioEmitters:
   * AudioEmitterUI for UserInterafce
   * AudioEmitterFX for Sound Effects
   * AudioEmitterST for SoundTracks
@@ -27,10 +27,8 @@
 ## Getting Started
 ### Prerequisites
 What you  need before using the project:
-* Preferably Unity Editor's [*LTS Release 2019.4.22f1*](https://unity3d.com/unity/qa/lts-releases) or later.
-* A Basic understanding of Unity Engine.
-* An Intermediate understanding of C#.
-* Hands. :3
+* Unity, preferably [*LTS Release 2019.4.22f1*](https://unity3d.com/unity/qa/lts-releases) or later.
+* FMOD Studio
 
 ### Installing
 Follow the instructions below to install the project:
@@ -42,9 +40,3 @@ Follow the instructions below to install the project:
 
 ### Collaboration
 Join my [*discord server*](https://discord.gg/pxwdw38Xjy) or add me on discord: Light#3039.
-
-## License
-  This project is licensed under the MIT License - see the LICENSE.md file for details.
-  
-## Acknowledgments
-  Thanks to everyone that's going to participate. ^^
