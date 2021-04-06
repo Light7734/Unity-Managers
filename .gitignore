@@ -58,6 +58,13 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
-## Packages
+# Packages
 Assets/Plugins.meta
 Assets/Plugins/**
+Assets
+Assets/Editor Default Resources/**
+
+# FMOD
+FMOD/.cache/**
+FMOD/Build/**
+FMOD/.user/**
