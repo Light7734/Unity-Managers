@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f524e6df9cf68464ebd3b2b12ae8a050, type: 3}
   m_Name: PlayerEmitterData
   m_EditorClassIdentifier: Assembly-CSharp::FModEmitterData
-  events: []
+  events:
+  - 
+  - 

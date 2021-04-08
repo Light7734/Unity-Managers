@@ -43,4 +43,10 @@ public class PlayerScript : MonoBehaviour
             musicEmitter["music"].SetTimelinePosition((int)v);
     }
 
+    public void OnSadnessSlider(float v)
+    {
+        musicEmitter["music"].SetParameter("Sadnes", v);
+    }
+
+
 }

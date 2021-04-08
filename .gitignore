@@ -68,3 +68,5 @@ Assets/Editor Default Resources/**
 FMOD/.cache/**
 FMOD/Build/**
 FMOD/.user/**
+FMOD/.unsaved/**
+fmod_editor.log

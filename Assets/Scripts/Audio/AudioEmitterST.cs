@@ -17,14 +17,29 @@ public class AudioEventSTInstance
     private FMOD.Studio.EventInstance instance;
     private FMOD.Studio.EventDescription description;
 
+    private Dictionary<string, FMOD.Studio.PARAMETER_ID> parameters = new Dictionary<string, FMOD.Studio.PARAMETER_ID>();
+
     private int length;
 
     public AudioEventSTInstance(FMOD.Studio.EventInstance instance)
     {
         this.instance = instance;
         instance.getDescription(out description);
+        
+        int count;
 
         description.getLength(out length);
+        description.getParameterDescriptionCount(out count);
+
+
+        for (int i = 0; i < count; i++)
+        {
+            FMOD.Studio.PARAMETER_DESCRIPTION paramDescription;
+            description.getParameterDescriptionByIndex(i, out paramDescription);
+            parameters.Add(paramDescription.name, paramDescription.id);
+            Debug.Log(paramDescription.name);
+        }
+
     }
 
     public void Start()
@@ -36,6 +51,14 @@ public class AudioEventSTInstance
     {
         instance.stop(mode);
         instance.setPaused(false);
+    }
+
+    public void SetParameter(string name, float value)
+    {
+        if (parameters.ContainsKey(name))
+            instance.setParameterByID(parameters[name], value);
+        else
+            Debug.LogError("[AudioEmitterST.SetParameter]: failed to find parameter with name '" + name + "'");
     }
 
     public FMOD.Studio.PLAYBACK_STATE GetPlaybackState()
@@ -50,7 +73,6 @@ public class AudioEventSTInstance
         return length;
     }
 
-    // toggle pause
     public void Pause()
     {
         FMOD.Studio.PLAYBACK_STATE state;
