@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
+
+using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 /// <summary> 
 ///     <para> An audio emitter specialized for sound effects. </para>
@@ -10,21 +13,22 @@ using System.Collections.Generic;
 /// </summary>....
 public class AudioEventFXInstance
 /*  TODO:
- *      Optimize the searching process to find a free instance.
  *      Release instances that are not in use for too long.
+ *      Add global parameter support.
  */
 {
     private List<FMOD.Studio.EventInstance> instances = new List<FMOD.Studio.EventInstance>();
+    private Stack<FMOD.Studio.EventInstance> stoppedInstances = new Stack<FMOD.Studio.EventInstance>();
 
-    private Transform transform;
-    private string path;
+    private Transform transform = null;
+    private string path = "";
 
     public AudioEventFXInstance(Transform transform, string path)
     {
         this.transform = transform;
         this.path = path;
 
-        instances.Add(FMODUnity.RuntimeManager.CreateInstance(path));
+        AddInstance();
     }
 
     ~AudioEventFXInstance()
@@ -33,24 +37,38 @@ public class AudioEventFXInstance
             instance.release();
     }
 
+    private FMOD.Studio.EventInstance AddInstance()
+    {
+        FMOD.Studio.EventInstance instance = FMODUnity.RuntimeManager.CreateInstance(path);
+        instance.setCallback(OnEventInstanceStopped, FMOD.Studio.EVENT_CALLBACK_TYPE.STOPPED);
+        instance.setUserData(stoppedInstances.ToIntPtr());
+
+        instances.Add(instance);
+        return instance;
+    }
+
+    private FMOD.RESULT OnEventInstanceStopped(FMOD.Studio.EVENT_CALLBACK_TYPE type, IntPtr _event, IntPtr parameters)
+    {
+        test();
+        return FMOD.RESULT.OK;
+    }
+
+    public void test()
+    {
+        Debug.Log(path);
+    }
+
     public void Start()
     {
-        foreach (FMOD.Studio.EventInstance instance in instances)
-        {
-            FMOD.Studio.PLAYBACK_STATE state;
-            instance.getPlaybackState(out state);
+        FMOD.Studio.EventInstance instance;
 
-            if (state == FMOD.Studio.PLAYBACK_STATE.STOPPED)
-            {
-                FMODUnity.RuntimeManager.AttachInstanceToGameObject(instance, transform, (Rigidbody2D)null);
-                instance.start();
-                return;
-            }
-        }
+        if (stoppedInstances.Count == 0)
+            instance = AddInstance();
+        else
+            instance = stoppedInstances.Pop();
 
-        instances.Add(FMODUnity.RuntimeManager.CreateInstance(path));
-        FMODUnity.RuntimeManager.AttachInstanceToGameObject(instances[instances.Count - 1], transform, (Rigidbody2D)null);
-        instances[instances.Count - 1].start();
+        FMODUnity.RuntimeManager.AttachInstanceToGameObject(instance, transform, (Rigidbody2D)null);
+        instance.start();
     }
     
 }
