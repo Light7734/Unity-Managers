@@ -19,6 +19,7 @@ public class AudioEventFXInstance
 {
     private List<FMOD.Studio.EventInstance> instances = new List<FMOD.Studio.EventInstance>();
     private Stack<FMOD.Studio.EventInstance> stoppedInstances = new Stack<FMOD.Studio.EventInstance>();
+    private IntPtr stackPtr;
 
     private Transform transform = null;
     private string path = "";
@@ -27,6 +28,8 @@ public class AudioEventFXInstance
     {
         this.transform = transform;
         this.path = path;
+
+        stackPtr = GCHandle.ToIntPtr(GCHandle.Alloc(stoppedInstances));
 
         AddInstance();
     }
@@ -37,19 +40,26 @@ public class AudioEventFXInstance
             instance.release();
     }
 
-    private FMOD.Studio.EventInstance AddInstance()
+    private void AddInstance()
     {
         FMOD.Studio.EventInstance instance = FMODUnity.RuntimeManager.CreateInstance(path);
         instance.setCallback(OnEventInstanceStopped, FMOD.Studio.EVENT_CALLBACK_TYPE.STOPPED);
-        instance.setUserData(stoppedInstances.ToIntPtr());
+        instance.setUserData(stackPtr);
 
         instances.Add(instance);
-        return instance;
+        stoppedInstances.Push(instance);
     }
 
     private FMOD.RESULT OnEventInstanceStopped(FMOD.Studio.EVENT_CALLBACK_TYPE type, IntPtr _event, IntPtr parameters)
     {
-        test();
+        FMOD.Studio.EventInstance instance = new FMOD.Studio.EventInstance(_event);
+
+        IntPtr data;
+        instance.getUserData(out data);
+
+        Stack<FMOD.Studio.EventInstance> stack = (GCHandle.FromIntPtr(data).Target as Stack<FMOD.Studio.EventInstance>);
+        stack.Push(instance);
+
         return FMOD.RESULT.OK;
     }
 
@@ -63,9 +73,9 @@ public class AudioEventFXInstance
         FMOD.Studio.EventInstance instance;
 
         if (stoppedInstances.Count == 0)
-            instance = AddInstance();
-        else
-            instance = stoppedInstances.Pop();
+            AddInstance();
+            
+        instance = stoppedInstances.Pop();
 
         FMODUnity.RuntimeManager.AttachInstanceToGameObject(instance, transform, (Rigidbody2D)null);
         instance.start();
