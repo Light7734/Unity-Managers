@@ -21,11 +21,14 @@ public class AudioEventFXInstance
     private Stack<FMOD.Studio.EventInstance> stoppedInstances = new Stack<FMOD.Studio.EventInstance>();
     private IntPtr stackPtr;
 
+    FMOD.Studio.EVENT_CALLBACK callback;
+
     private Transform transform = null;
     private string path = "";
 
     public AudioEventFXInstance(Transform transform, string path)
     {
+        callback = OnEventInstanceStopped;
         this.transform = transform;
         this.path = path;
 
@@ -43,29 +46,24 @@ public class AudioEventFXInstance
     private void AddInstance()
     {
         FMOD.Studio.EventInstance instance = FMODUnity.RuntimeManager.CreateInstance(path);
-        instance.setCallback(OnEventInstanceStopped, FMOD.Studio.EVENT_CALLBACK_TYPE.STOPPED);
+        instance.setCallback(callback, FMOD.Studio.EVENT_CALLBACK_TYPE.STOPPED);
         instance.setUserData(stackPtr);
 
         instances.Add(instance);
         stoppedInstances.Push(instance);
     }
 
-    private FMOD.RESULT OnEventInstanceStopped(FMOD.Studio.EVENT_CALLBACK_TYPE type, IntPtr _event, IntPtr parameters)
+    [AOT.MonoPInvokeCallback(typeof(FMOD.Studio.EVENT_CALLBACK))]
+    static private FMOD.RESULT OnEventInstanceStopped(FMOD.Studio.EVENT_CALLBACK_TYPE type, IntPtr _event, IntPtr parameters)
     {
         FMOD.Studio.EventInstance instance = new FMOD.Studio.EventInstance(_event);
 
         IntPtr data;
         instance.getUserData(out data);
-
+        
         Stack<FMOD.Studio.EventInstance> stack = (GCHandle.FromIntPtr(data).Target as Stack<FMOD.Studio.EventInstance>);
-        stack.Push(instance);
-
+        
         return FMOD.RESULT.OK;
-    }
-
-    public void test()
-    {
-        Debug.Log(path);
     }
 
     public void Start()
@@ -93,7 +91,11 @@ public class AudioEmitterFX : MonoBehaviour
     private void Awake()
     {
         for (int i = 0; i < data.events.Length; i++)
+        {
             events[data.events[i].Substring(data.events[i].LastIndexOf("/") + 1)] = new AudioEventFXInstance(transform, data.events[i]);
+            Debug.Log(data.events[i] + " - > " + data.events[i].Substring(data.events[i].LastIndexOf("/") + 1));
+        }
+        Debug.Log(events);
     }
 
     public AudioEventFXInstance this[string name]
