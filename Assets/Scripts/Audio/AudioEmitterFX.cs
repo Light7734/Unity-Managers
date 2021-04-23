@@ -28,7 +28,7 @@ public class AudioEventFXInstance
 
     public AudioEventFXInstance(Transform transform, string path)
     {
-        callback = OnEventInstanceStopped;
+        this.callback = OnEventInstanceStopped;
         this.transform = transform;
         this.path = path;
 
@@ -68,12 +68,10 @@ public class AudioEventFXInstance
 
     public void Start()
     {
-        FMOD.Studio.EventInstance instance;
-
         if (stoppedInstances.Count == 0)
             AddInstance();
-            
-        instance = stoppedInstances.Pop();
+
+        FMOD.Studio.EventInstance instance = stoppedInstances.Pop();
 
         FMODUnity.RuntimeManager.AttachInstanceToGameObject(instance, transform, (Rigidbody2D)null);
         instance.start();
@@ -91,15 +89,12 @@ public class AudioEmitterFX : MonoBehaviour
     private void Awake()
     {
         for (int i = 0; i < data.events.Length; i++)
-        {
             events[data.events[i].Substring(data.events[i].LastIndexOf("/") + 1)] = new AudioEventFXInstance(transform, data.events[i]);
-            Debug.Log(data.events[i] + " - > " + data.events[i].Substring(data.events[i].LastIndexOf("/") + 1));
-        }
-        Debug.Log(events);
     }
 
     public AudioEventFXInstance this[string name]
     {
         get { return events[name]; }
     }
+
 }

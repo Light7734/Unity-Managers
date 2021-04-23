@@ -61,7 +61,6 @@ crashlytics-build.properties
 # Packages
 Assets/Plugins.meta
 Assets/Plugins/**
-Assets
 Assets/Editor Default Resources/**
 
 # FMOD
