@@ -69,3 +69,6 @@ FMOD/Build/**
 FMOD/.user/**
 FMOD/.unsaved/**
 fmod_editor.log
+
+# Git keep
+!**.gitkeep
