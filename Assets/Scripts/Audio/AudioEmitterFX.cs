@@ -14,23 +14,24 @@ using System.Runtime.InteropServices;
 public class AudioEventFXInstance
 /*  TODO:
  *      Release instances that are not in use for too long.
- *      Add global parameter support.
+ *      Add parameter support.
  */
 {
     private List<FMOD.Studio.EventInstance> instances = new List<FMOD.Studio.EventInstance>();
     private Stack<FMOD.Studio.EventInstance> stoppedInstances = new Stack<FMOD.Studio.EventInstance>();
     private IntPtr stackPtr;
 
-    FMOD.Studio.EVENT_CALLBACK callback;
 
     private Transform transform = null;
     private string path = "";
 
+    FMOD.Studio.EVENT_CALLBACK callback;
+
     public AudioEventFXInstance(Transform transform, string path)
     {
-        this.callback = OnEventInstanceStopped;
         this.transform = transform;
         this.path = path;
+        this.callback = OnEventInstanceStopped;
 
         stackPtr = GCHandle.ToIntPtr(GCHandle.Alloc(stoppedInstances));
 
@@ -61,8 +62,8 @@ public class AudioEventFXInstance
         IntPtr data;
         instance.getUserData(out data);
         
-        Stack<FMOD.Studio.EventInstance> stack = (GCHandle.FromIntPtr(data).Target as Stack<FMOD.Studio.EventInstance>);
-        
+        ((Stack<FMOD.Studio.EventInstance>)GCHandle.FromIntPtr(data).Target).Push(instance);
+
         return FMOD.RESULT.OK;
     }
 
