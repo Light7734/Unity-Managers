@@ -45,7 +45,7 @@ public class MusicPlayer : MonoBehaviour
 
     public void OnSadnessSlider(float v)
     {
-        musicEmitter["music"].SetParameter("Sadnes", v);
+        sfxEmitter["sfx2"].SetGlobalParameter("Global", v);
     }
 
 }

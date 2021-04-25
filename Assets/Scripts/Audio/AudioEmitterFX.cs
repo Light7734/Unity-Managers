@@ -17,10 +17,23 @@ public class AudioEventFXInstance
  *      Add parameter support.
  */
 {
+    public class Parameter
+    {
+        public Parameter(FMOD.Studio.PARAMETER_ID id, float value)
+        {
+            this.id = id;
+            this.value = value;
+        }
+
+        public FMOD.Studio.PARAMETER_ID id;
+        public float value;
+    }
+
     private List<FMOD.Studio.EventInstance> instances = new List<FMOD.Studio.EventInstance>();
     private Stack<FMOD.Studio.EventInstance> stoppedInstances = new Stack<FMOD.Studio.EventInstance>();
     private IntPtr stackPtr;
 
+    private Dictionary<string, Parameter> parameters = new Dictionary<string, Parameter>();
 
     private Transform transform = null;
     private string path = "";
@@ -34,8 +47,21 @@ public class AudioEventFXInstance
         this.callback = OnEventInstanceStopped;
 
         stackPtr = GCHandle.ToIntPtr(GCHandle.Alloc(stoppedInstances));
-
         AddInstance();
+
+        FMOD.Studio.EventDescription description;
+        int count;
+
+        instances[0].getDescription(out description);
+        description.getParameterDescriptionCount(out count);
+
+        for (int i = 0; i < count; i++)
+        {
+            FMOD.Studio.PARAMETER_DESCRIPTION paramDescription;
+            description.getParameterDescriptionByIndex(i, out paramDescription);
+            parameters.Add(paramDescription.name, new Parameter(paramDescription.id, paramDescription.defaultvalue));
+            Debug.Log(paramDescription.name);
+        }
     }
 
     ~AudioEventFXInstance()
@@ -49,6 +75,9 @@ public class AudioEventFXInstance
         FMOD.Studio.EventInstance instance = FMODUnity.RuntimeManager.CreateInstance(path);
         instance.setCallback(callback, FMOD.Studio.EVENT_CALLBACK_TYPE.STOPPED);
         instance.setUserData(stackPtr);
+
+        foreach (KeyValuePair<string, Parameter> parameter in parameters)
+            instance.setParameterByID(parameter.Value.id, parameter.Value.value);
 
         instances.Add(instance);
         stoppedInstances.Push(instance);
@@ -77,7 +106,33 @@ public class AudioEventFXInstance
         FMODUnity.RuntimeManager.AttachInstanceToGameObject(instance, transform, (Rigidbody2D)null);
         instance.start();
     }
-    
+
+    public void SetParameter(string name, float value)
+    {
+        if (!parameters.ContainsKey(name))
+        {
+            Debug.LogError("[AudioEmitterFX.SetParameter]: failed to find parameter with name '" + name + "'");
+            return;
+        }
+
+        parameters[name].value = value;
+
+        foreach (FMOD.Studio.EventInstance instance in instances)
+            instance.setParameterByID(parameters[name].id, value);
+    }
+
+    public void SetGlobalParameter(string name, float value)
+    {
+        if (!parameters.ContainsKey(name))
+        {
+            Debug.LogError("[AudioEmitterFX.SetGlobalParameter]: failed to find parameter with name '" + name + "'");
+            return;
+        }
+
+        Debug.Log(value);
+        FMODUnity.RuntimeManager.StudioSystem.setParameterByID(parameters[name].id, value);
+    }
+
 }
 
 public class AudioEmitterFX : MonoBehaviour

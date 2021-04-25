@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects serializationModel="Studio.02.01.00">
-	<object class="ParameterPreset" id="{2e58f8f1-fc69-441f-85e5-a0016aefbd3c}">
+	<object class="ParameterPreset" id="{b2c3a816-c438-4ae6-a800-c0c4fadb4c18}">
 		<property name="name">
-			<value>Sadnes</value>
+			<value>Global</value>
 		</property>
 		<relationship name="folder">
 			<destination>{264bd2c1-886f-4ce2-989b-f7ead76d1fae}</destination>
 		</relationship>
 		<relationship name="parameter">
-			<destination>{b1f70f49-9053-411e-bbe8-d6216a30cb05}</destination>
+			<destination>{9b701fbb-bfbc-466e-a6e1-ab20fe9a93f3}</destination>
 		</relationship>
 	</object>
-	<object class="GameParameter" id="{b1f70f49-9053-411e-bbe8-d6216a30cb05}">
+	<object class="GameParameter" id="{9b701fbb-bfbc-466e-a6e1-ab20fe9a93f3}">
+		<property name="isGlobal">
+			<value>true</value>
+		</property>
 		<property name="initialValue">
-			<value>0</value>
+			<value>1</value>
 		</property>
 		<property name="isExposedRecursively">
 			<value>false</value>
