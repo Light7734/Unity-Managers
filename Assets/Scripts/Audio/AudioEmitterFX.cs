@@ -129,7 +129,6 @@ public class AudioEventFXInstance
             return;
         }
 
-        Debug.Log(value);
         FMODUnity.RuntimeManager.StudioSystem.setParameterByID(parameters[name].id, value);
     }
 
