@@ -9,7 +9,6 @@ using System.Collections.Generic;
 /// </summary>
 public class AudioEventSTInstance
 /*  TODO:
- *      Add parameter support.
  *      Add fadeIn/Out/To.
  *      General optimizations.
  */
