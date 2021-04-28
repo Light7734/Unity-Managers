@@ -111,7 +111,7 @@ public class AudioEventFXInstance
     {
         if (!parameters.ContainsKey(name))
         {
-            Debug.LogError("[AudioEmitterFX.SetParameter]: failed to find parameter with name '" + name + "'");
+            Debug.LogError("[AudioEmitterFX.SetParameter]: failed to find parameter with name \"" + name + '\"');
             return;
         }
 
@@ -125,11 +125,22 @@ public class AudioEventFXInstance
     {
         if (!parameters.ContainsKey(name))
         {
-            Debug.LogError("[AudioEmitterFX.SetGlobalParameter]: failed to find parameter with name '" + name + "'");
+            Debug.LogError("[AudioEmitterFX.SetGlobalParameter]: failed to find parameter with name \"" + name + '\"');
             return;
         }
 
         FMODUnity.RuntimeManager.StudioSystem.setParameterByID(parameters[name].id, value);
+    }
+
+    public float GetParameter(string name)
+    {
+        if(!parameters.ContainsKey(name))
+        {
+            Debug.LogError("[AudioEmitterFX.GetParameter]: failed to find parameter with name \"" + name + '\"');
+            return 0f;
+        }
+
+        return parameters[name].value;
     }
 
 }

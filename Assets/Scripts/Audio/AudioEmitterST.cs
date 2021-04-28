@@ -9,7 +9,6 @@ using System.Collections.Generic;
 /// </summary>
 public class AudioEventSTInstance
 /*  TODO:
- *      Add fadeIn/Out/To.
  *      General optimizations.
  */
 {
@@ -58,6 +57,21 @@ public class AudioEventSTInstance
             instance.setParameterByID(parameters[name], value);
         else
             Debug.LogError("[AudioEmitterST.SetParameter]: failed to find parameter with name '" + name + "'");
+    }
+
+    public float GetParameter(string name)
+    {
+        if (parameters.ContainsKey(name))
+        {
+            float value;
+            instance.getParameterByID(parameters[name], out value);
+            return value;
+        }
+        else
+        {
+            Debug.LogError("[AudioEmitterST.GetParameter]: failed to find parameter with name \"" + name + '"');
+            return 0f;
+        }
     }
 
     public FMOD.Studio.PLAYBACK_STATE GetPlaybackState()

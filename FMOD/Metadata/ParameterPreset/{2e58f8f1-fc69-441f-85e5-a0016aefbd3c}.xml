@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.01.00">
 	<object class="ParameterPreset" id="{2e58f8f1-fc69-441f-85e5-a0016aefbd3c}">
 		<property name="name">
-			<value>Sadnes</value>
+			<value>Sadness</value>
 		</property>
 		<relationship name="folder">
 			<destination>{264bd2c1-886f-4ce2-989b-f7ead76d1fae}</destination>
@@ -13,7 +13,7 @@
 	</object>
 	<object class="GameParameter" id="{b1f70f49-9053-411e-bbe8-d6216a30cb05}">
 		<property name="initialValue">
-			<value>0</value>
+			<value>0.5</value>
 		</property>
 		<property name="isExposedRecursively">
 			<value>false</value>

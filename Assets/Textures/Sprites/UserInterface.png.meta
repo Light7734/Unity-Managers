@@ -127,7 +127,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 54
+        y: 70
         width: 6
         height: 6
       alignment: 0
@@ -148,7 +148,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 7
-        y: 56
+        y: 72
         width: 87
         height: 4
       alignment: 0
@@ -169,7 +169,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 7
-        y: 51
+        y: 67
         width: 87
         height: 4
       alignment: 0
@@ -190,7 +190,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1
-        y: 34
+        y: 50
         width: 16
         height: 16
       alignment: 0
@@ -211,7 +211,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 18
-        y: 34
+        y: 50
         width: 16
         height: 16
       alignment: 0
@@ -231,8 +231,8 @@ TextureImporter:
       name: UserInterface_5
       rect:
         serializedVersion: 2
-        x: 35
-        y: 34
+        x: 1
+        y: 33
         width: 16
         height: 16
       alignment: 0
@@ -252,8 +252,8 @@ TextureImporter:
       name: UserInterface_6
       rect:
         serializedVersion: 2
-        x: 1
-        y: 17
+        x: 18
+        y: 33
         width: 16
         height: 16
       alignment: 0
@@ -273,10 +273,10 @@ TextureImporter:
       name: UserInterface_7
       rect:
         serializedVersion: 2
-        x: 18
+        x: 1
         y: 17
         width: 16
-        height: 16
+        height: 14
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -294,10 +294,10 @@ TextureImporter:
       name: UserInterface_8
       rect:
         serializedVersion: 2
-        x: 35
+        x: 18
         y: 17
         width: 16
-        height: 16
+        height: 14
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -315,10 +315,10 @@ TextureImporter:
       name: UserInterface_9
       rect:
         serializedVersion: 2
-        x: 1
-        y: 1
+        x: 18
+        y: 0
         width: 16
-        height: 15
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -336,12 +336,12 @@ TextureImporter:
       name: UserInterface_10
       rect:
         serializedVersion: 2
-        x: 18
-        y: 1
+        x: 1
+        y: 0
         width: 16
-        height: 15
+        height: 16
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -349,27 +349,6 @@ TextureImporter:
       bones: []
       spriteID: 26e993f26923d07a0800000000000000
       internalID: -6409411074059559326
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UserInterface_11
-      rect:
-        serializedVersion: 2
-        x: 35
-        y: 1
-        width: 16
-        height: 15
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 7bfed312cc2d69440800000000000000
-      internalID: 4942369415258566583
       vertices: []
       indices: 
       edges: []
