@@ -3,13 +3,15 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
 
+
+[RequireComponent(typeof(Image))]
 public class Button : MonoBehaviour,
     IPointerClickHandler, IPointerDownHandler, IPointerEnterHandler, IPointerUpHandler, IPointerExitHandler
 {
     [System.Serializable]
     private struct ButtonSprites
     {
-        public Sprite normal, hovered, pressed;
+        public Sprite normal, hovered, pressed, disabled;
     }
 
     private enum ButtonState
@@ -31,14 +33,25 @@ public class Button : MonoBehaviour,
     private ButtonSprites sprites;
 
     private ButtonState state;
+
+    bool isDisabled;
     
     private void Start()
     {
         image.alphaHitTestMinimumThreshold = 0.5f;
     }
 
+    public void SetDisable(bool? disable, bool toggle = false)
+    {
+        isDisabled = toggle ? !isDisabled : (bool)disable;
+        image.sprite = sprites.disabled;
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
+        if (isDisabled)
+            return;
+
         onClick.Invoke();
 
         emitter["click"].Start();
@@ -47,6 +60,9 @@ public class Button : MonoBehaviour,
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        if (isDisabled)
+            return;
+
         onPress.Invoke();
 
         emitter["press"].Start();
@@ -55,7 +71,7 @@ public class Button : MonoBehaviour,
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (state == ButtonState.Pressed)
+        if (state == ButtonState.Pressed || isDisabled)
             return;
 
         onHover.Invoke();
@@ -66,7 +82,7 @@ public class Button : MonoBehaviour,
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (state == ButtonState.Pressed)
+        if (state == ButtonState.Pressed || isDisabled)
             return;
 
         onUnhover.Invoke();
@@ -83,6 +99,9 @@ public class Button : MonoBehaviour,
     private void SetState(ButtonState newState)
     {
         state = newState;
+
+        if (isDisabled)
+            return;
 
         if (state == ButtonState.Normal)
             image.sprite = sprites.normal;
