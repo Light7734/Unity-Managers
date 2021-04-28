@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 08dca9fae5504444c9960cbd086c6106
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - sfx1: {fileID: 11400000, guid: 542d30653d4ad1447a1b7788f8ea0157, type: 2}
+  - sfx2: {fileID: 11400000, guid: 07587d77438309d47b5e6f2efa3cdc43, type: 2}
+  - sfx3: {fileID: 11400000, guid: 875ef4c7e0db59547b6affd5354b38be, type: 2}
+  - piano: {fileID: 11400000, guid: 22a6871b2d8a33347b2257747e12b8f2, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
