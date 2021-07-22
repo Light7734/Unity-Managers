@@ -4,7 +4,7 @@ public class SceneManager
 {
     private static SceneManager instance;
 
-    private List<UnityEngine.SceneManagement.Scene> cachedScenes;
+    private List<int> cachedScenesIndex = new List<int> { };
 
     public SceneManager() {}
 
@@ -19,67 +19,74 @@ public class SceneManager
 
     public static void LoadScene(UnityEngine.SceneManagement.Scene scene)
     {
-        instance.cachedScenes.Add(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+        instance.cachedScenesIndex.Add(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
         UnityEngine.SceneManagement.SceneManager.LoadScene(scene.buildIndex);
     }
 
-    public static void LoadScene(int buildIndex)
+    public static void LoadSceneByBuildIndex(int buildIndex)
     {
-        instance.cachedScenes.Add(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+        instance.cachedScenesIndex.Add(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
         UnityEngine.SceneManagement.SceneManager.LoadScene(buildIndex);
     }
 
     public static void LoadSceneByName(string name)
     {
-        instance.cachedScenes.Add(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
-        UnityEngine.SceneManagement.SceneManager.GetSceneByName(name);
+        instance.cachedScenesIndex.Add(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+        UnityEngine.Debug.Log("Added scene: " + UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene(name);
     }
 
     public static void LoadNextScene()
     {
-        LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex + 1);
+        LoadSceneByBuildIndex(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex + 1);
     }
 
     public static void LoadPrevScene()
     {
-        LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex - 1);
+        LoadSceneByBuildIndex(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex - 1);
     }
 
     public static void LoadFirstCachedScene()
     {
-        if (instance.cachedScenes.IsEmpty())
+        if (instance.cachedScenesIndex.IsEmpty())
         {
             UnityEngine.Debug.LogError("SceneManager.LoadFirstCachedScene: cachedScenes is empty");
             return;
         }
 
-        LoadScene(instance.cachedScenes[0]);
+        LoadSceneByBuildIndex(instance.cachedScenesIndex[0]);
     }
 
     public static void LoadLastCachedScene()
     {
-        if (instance.cachedScenes.IsEmpty())
+        if (instance.cachedScenesIndex.IsEmpty())
         {
             UnityEngine.Debug.LogError("SceneManager.LoadLastCachedScene: cachedScenes is empty");
             return;
         }
             
-        LoadScene(instance.cachedScenes.Last());
+        LoadSceneByBuildIndex(instance.cachedScenesIndex.Last());
     }
 
     public static void LoadFirstScene()
     {
-        LoadScene(0);
+        LoadSceneByBuildIndex(0);
     }
 
     public static void LoadLastScene()
     {
-        LoadScene(UnityEngine.SceneManagement.SceneManager.sceneCount - 1);
+        LoadSceneByBuildIndex(UnityEngine.SceneManagement.SceneManager.sceneCount - 1);
     }
 
-    public List<UnityEngine.SceneManagement.Scene> GetCachedScenes()
+    public static List<int> GetCachedScenes()
     {
-        return instance.cachedScenes;
+        string text = "Cached Scenes Index: ";
+        foreach (int sceneIndex in instance.cachedScenesIndex)
+            text += sceneIndex + ", ";
+        UnityEngine.Debug.Log(text);
+
+        return instance.cachedScenesIndex;
     }
 
 }
