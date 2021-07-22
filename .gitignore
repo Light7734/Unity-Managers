@@ -51,6 +51,9 @@ sysinfo.txt
 # Unity3D WORKSTATION folder
 Assets/WORKSTATION/**
 
+# Unity3D UserSettings folder
+UserSettings/**
+
 # Builds
 *.apk
 *.unitypackage
