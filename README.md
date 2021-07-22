@@ -13,7 +13,7 @@
 #### Features to come:
   * Improved Audio Emitters
     * AudioEmitterAS for AmbientSounds
-    * Improve the other AudioEmitters
+    * Improved AudioEmitters
     * Parameter support
 * Improved SingletonManager 
   * Write the fail reason to a file
@@ -26,17 +26,21 @@
 
 ## Getting Started
 ### Prerequisites
-What you  need before using the project:
-* Unity, preferably [*LTS Release 2019.4.22f1*](https://unity3d.com/unity/qa/lts-releases) or later.
+* Unity, preferably version [*2021.1.15*](https://unity3d.com/get-unity/download/archive) or above
+
 * FMOD Studio
 
-### Installing
-Follow the instructions below to install the project:
-* Clone the repository ( or download it az a zip, and unzip it ).
-* Go to UnityHub -> Projects -> Add -> *Open the repository's folder*.
-* Download and import the [FMOD For Unity](https://assetstore.unity.com/packages/tools/audio/fmod-for-unity-161631) package.
-* Set the FMOD's Studio Project Path.
-* Build the FMOD project in RootDir/FMOD/UnityManagers.fspro.
+### Installation
+Run `git clone https://github.com/Light3039/Unity-Managers`
+
+Open the cloned repository with UnityHub or open any .unity scene
+
+Download and import the [FMOD For Unity](https://assetstore.unity.com/packages/tools/audio/fmod-for-unity-161631) package
+
+Set the FMOD's Studio Project Path
+
+Build the FMOD project in RootDir/FMOD/UnityManagers.fspro
+
 
 ### Collaboration
-Join my [*discord server*](https://discord.gg/pxwdw38Xjy) or add me on discord: Light#3039.
+Add me on discord: Light#3039
