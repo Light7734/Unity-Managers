@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects serializationModel="Studio.02.01.00">
-	<object class="MasterTagFolder" id="{44f59da5-c9e8-400c-a8de-eeffb95866f5}">
+	<object class="MasterEventFolder" id="{412f5c7f-214a-4b6a-855f-23a2681aaf21}">
 		<property name="name">
 			<value>Master</value>
 		</property>
