@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using UnityEngine;
 
-public class SceneManager
+using System.Collections.Generic;
+
+public class SceneManager : MonoBehaviour
 {
     private static SceneManager instance;
 
     private List<int> cachedScenesIndex = new List<int> { };
+
+    [SerializeField] private Animator sceneTransition = null;
 
     public SceneManager() {}
 
@@ -13,38 +17,49 @@ public class SceneManager
         if (instance != null)
             return false;
 
-        instance = new SceneManager();
+        instance = (Instantiate(Resources.Load("SceneManager", typeof(GameObject))) as GameObject).GetComponent<SceneManager>();
+        DontDestroyOnLoad(instance.gameObject);
+
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+
         return instance != null;
     }
 
     public static void LoadScene(UnityEngine.SceneManagement.Scene scene)
     {
+        if(instance.sceneTransition)
+            instance.sceneTransition.SetTrigger("FadeOut");
+
         instance.cachedScenesIndex.Add(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
         UnityEngine.SceneManagement.SceneManager.LoadScene(scene.buildIndex);
     }
 
-    public static void LoadSceneByBuildIndex(int buildIndex)
+    public static void LoadScene(int buildIndex)
     {
+        if (instance.sceneTransition)
+            instance.sceneTransition.SetTrigger("FadeOut");
+
         instance.cachedScenesIndex.Add(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
         UnityEngine.SceneManagement.SceneManager.LoadScene(buildIndex);
     }
 
-    public static void LoadSceneByName(string name)
+    public static void LoadScene(string name)
     {
-        instance.cachedScenesIndex.Add(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
-        UnityEngine.Debug.Log("Added scene: " + UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        if (instance.sceneTransition)
+            instance.sceneTransition.SetTrigger("FadeOut");
 
+        instance.cachedScenesIndex.Add(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
         UnityEngine.SceneManagement.SceneManager.LoadScene(name);
     }
 
     public static void LoadNextScene()
     {
-        LoadSceneByBuildIndex(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex + 1);
+        LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex + 1);
     }
 
     public static void LoadPrevScene()
     {
-        LoadSceneByBuildIndex(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex - 1);
+        LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex - 1);
     }
 
     public static void LoadFirstCachedScene()
@@ -55,7 +70,7 @@ public class SceneManager
             return;
         }
 
-        LoadSceneByBuildIndex(instance.cachedScenesIndex[0]);
+        LoadScene(instance.cachedScenesIndex[0]);
     }
 
     public static void LoadLastCachedScene()
@@ -65,28 +80,39 @@ public class SceneManager
             UnityEngine.Debug.LogError("SceneManager.LoadLastCachedScene: cachedScenes is empty");
             return;
         }
-            
-        LoadSceneByBuildIndex(instance.cachedScenesIndex.Last());
+
+        LoadScene(instance.cachedScenesIndex.Last());
     }
 
     public static void LoadFirstScene()
     {
-        LoadSceneByBuildIndex(0);
+        LoadScene(0);
     }
 
     public static void LoadLastScene()
     {
-        LoadSceneByBuildIndex(UnityEngine.SceneManagement.SceneManager.sceneCount - 1);
+        LoadScene(UnityEngine.SceneManagement.SceneManager.sceneCount - 1);
     }
 
     public static List<int> GetCachedScenes()
     {
-        string text = "Cached Scenes Index: ";
-        foreach (int sceneIndex in instance.cachedScenesIndex)
-            text += sceneIndex + ", ";
-        UnityEngine.Debug.Log(text);
-
         return instance.cachedScenesIndex;
+    }
+
+    public static void SetSceneTransition(Animator animator)
+    {
+        instance.sceneTransition = animator;
+    }
+
+    public static void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+    {
+        Debug.Log("The scene \"" + scene.name + "\" loaded with mode: " + mode.ToString());
+
+        if (instance.sceneTransition)
+        {
+            Debug.Log("Triggering a scene transition");
+            instance.sceneTransition.SetTrigger("FadeIn");
+        }
     }
 
 }
