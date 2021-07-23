@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 using System.Collections.Generic;
+using System.Collections;
 
 public class SceneManager : MonoBehaviour
 {
@@ -9,6 +10,8 @@ public class SceneManager : MonoBehaviour
     private List<int> cachedScenesIndex = new List<int> { };
 
     [SerializeField] private Animator sceneTransition = null;
+
+    private bool isFadingIn = false, isFadingOut = false;
 
     public SceneManager() {}
 
@@ -25,31 +28,22 @@ public class SceneManager : MonoBehaviour
         return instance != null;
     }
 
-    public static void LoadScene(UnityEngine.SceneManagement.Scene scene)
-    {
-        if(instance.sceneTransition)
-            instance.sceneTransition.SetTrigger("FadeOut");
-
-        instance.cachedScenesIndex.Add(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
-        UnityEngine.SceneManagement.SceneManager.LoadScene(scene.buildIndex);
-    }
-
     public static void LoadScene(int buildIndex)
     {
-        if (instance.sceneTransition)
-            instance.sceneTransition.SetTrigger("FadeOut");
+        if (instance.isFadingOut)
+            return;
 
         instance.cachedScenesIndex.Add(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
-        UnityEngine.SceneManagement.SceneManager.LoadScene(buildIndex);
+        instance.StartCoroutine(instance.LoadSceneDefered(buildIndex, 0));
     }
 
     public static void LoadScene(string name)
     {
-        if (instance.sceneTransition)
-            instance.sceneTransition.SetTrigger("FadeOut");
+        if (instance.isFadingOut)
+            return;
 
         instance.cachedScenesIndex.Add(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
-        UnityEngine.SceneManagement.SceneManager.LoadScene(name);
+        instance.StartCoroutine(instance.LoadSceneDefered(name, 0));
     }
 
     public static void LoadNextScene()
@@ -109,10 +103,56 @@ public class SceneManager : MonoBehaviour
         Debug.Log("The scene \"" + scene.name + "\" loaded with mode: " + mode.ToString());
 
         if (instance.sceneTransition)
-        {
-            Debug.Log("Triggering a scene transition");
-            instance.sceneTransition.SetTrigger("FadeIn");
-        }
+            instance.sceneTransition.PlayImmediate("FadeIn");
     }
 
+    private IEnumerator LoadSceneDefered(string name, float waitDuration)
+    {
+        instance.isFadingOut = true;
+
+        // wait for previous transitions to end
+        while (instance.isFadingIn)
+            yield return null;
+        instance.isFadingIn = false;
+
+        instance.sceneTransition.PlayImmediate("FadeOut");
+        while (instance.sceneTransition.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
+            yield return null;
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene(name);
+
+        instance.isFadingOut = false;
+        instance.isFadingIn = true;
+
+        instance.sceneTransition.PlayImmediate("FadeIn");
+        while (instance.sceneTransition.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
+            yield return null;
+
+        instance.isFadingIn = false;
+    }
+
+    private IEnumerator LoadSceneDefered(int buildIndex, float waitDuration)
+    {
+        instance.isFadingOut = true;
+
+        // wait for previous transitions to end
+        while (instance.isFadingIn)
+            yield return null;
+        instance.isFadingIn = false;
+
+        instance.sceneTransition.PlayImmediate("FadeOut");
+        while (instance.sceneTransition.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
+            yield return null;
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene(buildIndex);
+
+        instance.isFadingOut = false;
+        instance.isFadingIn = true;
+
+        instance.sceneTransition.PlayImmediate("FadeIn");
+        while (instance.sceneTransition.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
+            yield return null;
+
+        instance.isFadingIn = false;
+    }
 }
