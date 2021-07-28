@@ -28,5 +28,4 @@ class RuntimeInitializer
     private static void OnAfterSceneLoad()
     {
     }
-
 }

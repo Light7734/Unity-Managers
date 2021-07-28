@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 
 public static class AnimatorExtensions
 {
@@ -19,5 +18,10 @@ public static class AnimatorExtensions
     {
         animator.SetTrigger(triggerID);
         animator.Update(0f);
+    }
+
+    public static bool IsPlaying(this Animator animator)
+    {
+        return animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f;
     }
 }

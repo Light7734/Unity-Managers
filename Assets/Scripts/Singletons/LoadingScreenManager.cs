@@ -12,27 +12,32 @@ struct GameTip
 
 class LoadingScreenManager : MonoBehaviour
 {
-    [Header("LoadingProgress")]
-    [SerializeField] private Image loadingProgressMask;
-    [SerializeField] private TextMeshProUGUI loadingProgressPercentage;
+    [Header("Progress")]
 
-    [Header("Tips")]
+    [SerializeField] private Image progressBarImageMask;
+    [SerializeField] private TextMeshProUGUI progressBarPercent;
+
+
+    [Header("Game Tips")]
+
     [SerializeField] private Image tipTimerBG;
     [SerializeField] private Image tipTimerMask;
     [SerializeField] private Image tipTimerFill;
     [SerializeField] private TextMeshProUGUI tipText;
 
-    [Range(0.0f, 1.0f)]
+    [Range(0.1f, 1.1f)]
     [SerializeField] private float tipFadeIn = .2f, tipFadeOut = .4f;
 
+    // #todo: load tips from a file
+    // #todo: add level specific tips
     [SerializeField] private List<GameTip> tips = new List<GameTip> { };
 
-    bool isChangingTip = false;
-
-    private float testVar = 0f;
-
+    private bool isChangingTip = false;
     private float tipTimer = 0f;
     private float currentTipDuration = 0f;
+
+
+    private float testVar = 0f;
 
     private void Start()
     {
@@ -55,8 +60,8 @@ class LoadingScreenManager : MonoBehaviour
 
     private void Update()
     {
-        testVar = loadingProgressMask.fillAmount += Time.deltaTime * 25f / 100.0f;
-        loadingProgressPercentage.text = (Mathf.FloorToInt(testVar * 100.0f)).ToString() + '%';
+        testVar = progressBarImageMask.fillAmount += Time.deltaTime * 25f / 100.0f;
+        progressBarPercent.text = (Mathf.FloorToInt(testVar * 100.0f)).ToString() + '%';
 
         if (!isChangingTip)
         {

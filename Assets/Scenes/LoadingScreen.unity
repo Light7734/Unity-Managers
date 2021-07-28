@@ -558,7 +558,7 @@ GameObject:
   - component: {fileID: 865360487}
   m_Layer: 5
   m_Name: Canvas
-  m_TagString: Untagged
+  m_TagString: LoadingScreen
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -658,13 +658,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 226e5c8204355434db7c3a84aacda381, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loadingProgressMask: {fileID: 1752545427}
-  loadingProgressPercentage: {fileID: 396659927}
+  progressBarImageMask: {fileID: 1752545427}
+  progressBarPercent: {fileID: 396659927}
   tipTimerBG: {fileID: 756859817}
   tipTimerMask: {fileID: 2057696939}
   tipTimerFill: {fileID: 746782750}
   tipText: {fileID: 434495061}
-  tipFadeIn: 0.176
+  tipFadeIn: 0
   tipFadeOut: 0.307
   tips:
   - content: A
