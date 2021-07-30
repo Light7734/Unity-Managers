@@ -15,5 +15,6 @@ public class GameLevel : ScriptableObject
     [SerializeField] public GameLevelIndex index;
 
     [SerializeField] public string fullPath;
+    [SerializeField] public string tagIdentifier;
     [SerializeField] public List<GameLevelScetion> sections = new List<GameLevelScetion> { };
 }

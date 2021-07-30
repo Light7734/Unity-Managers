@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   index: 3
   fullPath: Scenes/Levels/The First Level/The First Level
+  tagIdentifier: The First Level
   sections:
   - name: Top Left
     fullPath: Scenes/Levels/The First Level/Sections/Section Top Left

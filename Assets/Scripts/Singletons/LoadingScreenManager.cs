@@ -4,10 +4,16 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [System.Serializable]
-struct GameTip
+public struct GameTip
 {
     public string content;
     public float duration;
+}
+
+public enum LoadingScreenPhase
+{
+    Unloading = 0,
+    Loading   = 1,
 }
 
 class LoadingScreenManager : MonoBehaviour
@@ -36,8 +42,9 @@ class LoadingScreenManager : MonoBehaviour
     private float tipTimer = 0f;
     private float currentTipDuration = 0f;
 
+    private List<AsyncOperation> loadingOperations = new List<AsyncOperation>{};
 
-    private float testVar = 0f;
+    LoadingScreenPhase currentPhase = LoadingScreenPhase.Unloading;
 
     private void Start()
     {
@@ -60,8 +67,17 @@ class LoadingScreenManager : MonoBehaviour
 
     private void Update()
     {
-        testVar = progressBarImageMask.fillAmount += Time.deltaTime * 25f / 100.0f;
-        progressBarPercent.text = (Mathf.FloorToInt(testVar * 100.0f)).ToString() + '%';
+        if (!loadingOperations.IsEmpty())
+        {
+            float operationsProgress = 0f;
+            foreach (var operation in loadingOperations)
+                operationsProgress += operation.progress;
+
+            operationsProgress = ((int)currentPhase / 2f) + (operationsProgress / loadingOperations.Count / 2f);
+
+            progressBarImageMask.fillAmount = operationsProgress;
+            progressBarPercent.text = (operationsProgress * 100f).ToString() + '%';
+        }
 
         if (!isChangingTip)
         {
@@ -114,6 +130,12 @@ class LoadingScreenManager : MonoBehaviour
     {
         // #todo: don't choose previously shown tips
         return tips[Random.Range(0, tips.Count - 1)];
+    }
+
+    public void SetPhase(LoadingScreenPhase phase, List<AsyncOperation> operations)
+    {
+        currentPhase = phase;
+        this.loadingOperations = operations;
     }
 
 }

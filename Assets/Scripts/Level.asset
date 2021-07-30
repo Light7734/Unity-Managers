@@ -10,9 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ded8010d247b52a40a5d8b887d797bcc, type: 3}
-  m_Name: LoadingScreen
+  m_Name: Level
   m_EditorClassIdentifier: 
-  index: 2
-  fullPath: Scenes/LoadingScreen
-  tagIdentifier: LoadingScreen
-  sections: []
+  name: 
+  fullPath: 
+  sections:
+  - name: 
+    fullPath: 
+  - name: 
+    fullPath: 
+  - name: 
+    fullPath: 

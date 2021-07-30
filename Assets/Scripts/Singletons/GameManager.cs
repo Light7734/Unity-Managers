@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using System;
 
 public enum GameLevelIndex
 {
@@ -11,6 +12,10 @@ public enum GameLevelIndex
 
     FIRST_LEVEL,
     LAST_LEVEL,
+}
+
+public enum GameState
+{
 }
 
 public class GameManager : MonoBehaviour
@@ -27,33 +32,59 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        foreach (var level in gameLevels)
-            gameLevelsDictionary[level.index] = level;
+
 
         instance = this;
     }
 
     private void Start()
     {
+        foreach (var level in gameLevels)
+        {
+            gameLevelsDictionary[level.index] = level;
 
+            Debug.Log(level.tagIdentifier);
 #if UNITY_EDITOR
-       // LevelManager.Load(GameLevelIndex.PRE_MAIN_MENU);
-       // UnityEngine.SceneManagement.SceneManager.LoadScene((int)GameScenes.PRE_MAIN_MENU, UnityEngine.SceneManagement.LoadSceneMode.Additive);
+            if (GameObject.FindWithTag(level.tagIdentifier))
+            {
+                Debug.Log("FOUND!");
+                currentGameLevel = level;
+            }
+#endif
+        }
+
+        if (currentGameLevel == null)
+            Debug.LogError("Failed to find a game object with current level's tag identifier");
+#if !UNITY_EDITOR
+            UnityEngine.SceneManagement.SceneManager.LoadScene(gameLevelsDictionary[GameLevelIndex.PRE_MAIN_MENU].fullPath, UnityEngine.SceneManagement.LoadSceneMode.Additive);
+            currentGameLevel = gameLevelsDictionary[GameLevelIndex.PRE_MAIN_MENU];
 #endif
     }
 
     public static void LoadLevelImmidiate(GameLevelIndex index)
     {
-        instance.LoadLevelImmidiateImpl(index);
+        instance.StartCoroutine(instance.LoadLevelImmidiateImpl(index));
     }
 
-    private void LoadLevelImmidiateImpl(GameLevelIndex index)
+    private IEnumerator LoadLevelImmidiateImpl(GameLevelIndex index)
     {
-        if (currentGameLevel)
-            foreach (var section in gameLevelsDictionary[index].sections)
-                UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(currentGameLevel.fullPath);
+        List<AsyncOperation> operations = new List<AsyncOperation>{};
 
-        UnityEngine.SceneManagement.SceneManager.LoadScene(gameLevelsDictionary[index].fullPath);
+        if (currentGameLevel)
+        {
+            foreach (var section in gameLevelsDictionary[index].sections)
+                try {
+                    operations.Add(UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(section.fullPath));
+                } catch (ArgumentException e) { continue; } /* Scene to unload is invalid */
+
+            operations.Add(UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(currentGameLevel.fullPath));
+        }
+
+        foreach (var operation in operations)
+            while (!operation.isDone)
+                yield return null;
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene(gameLevelsDictionary[index].fullPath, UnityEngine.SceneManagement.LoadSceneMode.Additive);
     }
 
     public static void LoadLevel(GameLevelIndex index)
@@ -78,15 +109,21 @@ public class GameManager : MonoBehaviour
         while (sceneTransition.IsPlaying())
             yield return null;
 
-        // LoadingScreenManager loadingScreen = GameObject.FindWithTag("LoadingScreen").GetComponent<LoadingScreenManager>();
+        LoadingScreenManager loadingScreen = GameObject.FindWithTag("LoadingScreen").GetComponent<LoadingScreenManager>();
 
         // unload current game level
         if (currentGameLevel)
         {
             List<AsyncOperation> operations = new List<AsyncOperation> { };
 
-            foreach (var section in gameLevelsDictionary[index].sections)
-                operations.Add(UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(currentGameLevel.fullPath));
+            foreach (var section in currentGameLevel.sections)
+                try {
+                    operations.Add(UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(section.fullPath));
+                } catch (ArgumentException e) { continue; } /* Scene to unload is invalid */
+
+            operations.Add(UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(currentGameLevel.fullPath));
+
+            loadingScreen.SetPhase(LoadingScreenPhase.Unloading, operations);
 
             foreach (var operation1 in operations)
                 while (!operation1.isDone)
@@ -97,10 +134,13 @@ public class GameManager : MonoBehaviour
         }
 
         // load the requested level
-        AsyncOperation operation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(gameLevelsDictionary[index].fullPath, UnityEngine.SceneManagement.LoadSceneMode.Additive);
-        while (!operation.isDone)
+        operations = new List<AsyncOperation> {};
+        operations.Add(UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(gameLevelsDictionary[index].fullPath, UnityEngine.SceneManagement.LoadSceneMode.Additive));
+        loadingScreen.SetPhase(LoadingScreenPhase.Loading, operations);
+
+        while (!operations[0].isDone)
         {
-            Debug.Log("Async operation load: " + operation.progress);
+            Debug.Log("Async operation load: " + operations[0].progress);
             yield return null;
         }
 
@@ -111,7 +151,7 @@ public class GameManager : MonoBehaviour
             yield return null;
 
         // unload loading screen
-        operation = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(gameLevelsDictionary[GameLevelIndex.LOADING_SCREEN].fullPath);
+        AsyncOperation operation = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(gameLevelsDictionary[GameLevelIndex.LOADING_SCREEN].fullPath);
         while (!operation.isDone)
         {
             Debug.Log("Async operation unload: " + operation.progress);
