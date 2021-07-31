@@ -29,7 +29,6 @@ public class GameManager : MonoBehaviour
 
     GameLevel currentGameLevel = null;
 
-    private List<AsyncOperation> operations = new List<AsyncOperation> {};
     [SerializeField] private Animator sceneTransition = null;
 
     GameManager()
@@ -43,29 +42,49 @@ public class GameManager : MonoBehaviour
         foreach (var index in gameLevels.Values)
             if (GameObject.FindWithTag(index.tagIdentifier))
                 currentGameLevel = index;
-#endif
+
         if (currentGameLevel == null)
             Debug.LogError("Failed to find a game object with current level's tag identifier");
-#if !UNITY_EDITOR
+#else
             UnityEngine.SceneManagement.SceneManager.LoadScene(gameLevelsDictionary[GameLevelIndex.PRE_MAIN_MENU].fullPath, UnityEngine.SceneManagement.LoadSceneMode.Additive);
             currentGameLevel = gameLevelsDictionary[GameLevelIndex.PRE_MAIN_MENU];
 #endif
     }
 
-    public static void LoadLevelImmidiate(GameLevelIndex index)
+    public static void LoadLevelImmediate(GameLevelIndex index, bool fade = false)
     {
-        if(!instance.isLoadingLevel)
+        if(instance.isLoadingLevel)
         {
             Debug.LogWarning("[GameManager.LoadLevelImmidiate]: a level is currently being loaded");
             return;
         }
 
-        instance.StartCoroutine(instance.LoadLevelImmidiateImpl(index));
+        instance.StartCoroutine(instance.LoadLevelImmediateImpl(index, fade));
     }
 
-    private IEnumerator LoadLevelImmidiateImpl(GameLevelIndex index)
+    public static void LoadLevel(GameLevelIndex index)
     {
+        if (instance.isLoadingLevel)
+        {
+            Debug.LogWarning("[GameManager.LoadLevelImmidiate]: a level is currently being loaded");
+            return;
+        }
+
+        instance.StartCoroutine(instance.LoadLevelImpl(index));
+    }
+
+    private IEnumerator LoadLevelImmediateImpl(GameLevelIndex index, bool fade)
+    {
+        isLoadingLevel = true;
         List<AsyncOperation> operations = new List<AsyncOperation>{};
+
+        // fade out of current level
+        if (fade)
+        {
+            sceneTransition.PlayImmediate("FadeOut");
+            while (sceneTransition.IsPlaying())
+                yield return null;
+        }
 
         if (currentGameLevel)
         {
@@ -82,65 +101,79 @@ public class GameManager : MonoBehaviour
                 yield return null;
 
         UnityEngine.SceneManagement.SceneManager.LoadScene(gameLevels[index].fullPath, UnityEngine.SceneManagement.LoadSceneMode.Additive);
-    }
 
-    public static void LoadLevel(GameLevelIndex index)
-    {
-        instance.StartCoroutine(instance.LoadLevelImpl(index));
+        if (fade)
+        {
+            sceneTransition.PlayImmediate("FadeIn");
+            while (sceneTransition.IsPlaying())
+                yield return null;
+        }
+
+        currentGameLevel = gameLevels[index];
+        isLoadingLevel = false;
     }
 
     private IEnumerator LoadLevelImpl(GameLevelIndex index)
     {
+        isLoadingLevel = true;
+
         // fade out of current level
         sceneTransition.PlayImmediate("FadeOut");
-
         while(sceneTransition.IsPlaying())
             yield return null;
+
+        // unload current game level
+        if (currentGameLevel)
+        {
+            List<AsyncOperation> unloadOperations = new List<AsyncOperation>();
+
+            // unload game level sections
+            foreach (var section in currentGameLevel.sections)
+                try { unloadOperations.Add(UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(section.fullPath)); }
+                catch (ArgumentException e) { continue; } /* Scene to unload is invalid */
+
+            // unload game level itself
+            unloadOperations.Add(UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(currentGameLevel.fullPath));
+
+            // wait for the current level to unload
+            foreach (var unloadOperation in unloadOperations)
+                if (!unloadOperation.isDone)
+                    yield return null;
+        }
 
         // load loading screen
         UnityEngine.SceneManagement.SceneManager.LoadScene(gameLevels[GameLevelIndex.LOADING_SCREEN].fullPath, UnityEngine.SceneManagement.LoadSceneMode.Additive);
 
         // fade in to loading screen
         sceneTransition.PlayImmediate("FadeIn");
-
         while (sceneTransition.IsPlaying())
             yield return null;
 
+
+        // instantiate async operations
+        List<AsyncOperation> loadOperations = new List<AsyncOperation> 
+        { 
+            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(gameLevels[index].fullPath, UnityEngine.SceneManagement.LoadSceneMode.Additive)
+        };
+
+        // fetch and inform the loading screen manager about the operations
         LoadingScreenManager loadingScreen = GameObject.FindWithTag("LoadingScreen").GetComponent<LoadingScreenManager>();
+        loadingScreen.SetOperations(loadOperations);
 
-        // unload current game level
-        if (currentGameLevel)
-        {
-            List<AsyncOperation> operations = new List<AsyncOperation> { };
-
-            foreach (var section in currentGameLevel.sections)
-                try {
-                    operations.Add(UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(section.fullPath));
-                } catch (ArgumentException e) { continue; } /* Scene to unload is invalid */
-
-            operations.Add(UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(currentGameLevel.fullPath));
-        }
-
-        // load the requested level
-        operations.Add(UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(gameLevels[index].fullPath, UnityEngine.SceneManagement.LoadSceneMode.Additive));
-        loadingScreen.SetOperations(operations);
-
-        while (!operations[0].isDone)
+        // wait for the level to load
+        // #high_priority #todo: support loading level sections with level!
+        while (!loadOperations[0].isDone)
             yield return null;
 
         // fade out of loading screen
         sceneTransition.PlayImmediate("FadeOut");
-
         while(sceneTransition.IsPlaying())
             yield return null;
 
         // unload loading screen
-        AsyncOperation operation = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(gameLevels[GameLevelIndex.LOADING_SCREEN].fullPath);
-        while (!operation.isDone)
-        {
-            Debug.Log("Async operation unload: " + operation.progress);
+        AsyncOperation unloadLoadingScreen = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(gameLevels[GameLevelIndex.LOADING_SCREEN].fullPath);
+        while (!unloadLoadingScreen.isDone)
             yield return null;
-        }
 
         // fade into requested level
         sceneTransition.PlayImmediate("FadeIn");
@@ -148,45 +181,8 @@ public class GameManager : MonoBehaviour
         while(sceneTransition.IsPlaying())
             yield return null;
 
+        currentGameLevel = gameLevels[index];
+        isLoadingLevel = false;
     }
-
-    //
-    //static public void LoadLevelSection(GameLevelIndex section)
-    //{
-    //    LevelManager.LoadLevelSection(section);
-    //}
-    //
-    //static public void UnloadLevelSection(GameLevelIndex section)
-    //{
-    //    LevelManager.UnloadLevelSection(section);
-    //}
-    //
-    //private IEnumerator LoadNewLeveLCoroutine(int levelIndex)
-    //{
-    //    // start loading the loading screen and fade out
-    //    instance.operations.Add(UnityEngine.SceneManagement.SceneManager.LoadSceneAsync((int)GameLevelIndex.LOADING_SCREEN, UnityEngine.SceneManagement.LoadSceneMode.Additive));
-    //    LevelManager.FadeOut();
-    //
-    //    // wait for all the operations to end
-    //    foreach (var operation in instance.operations)
-    //        if (!operation.isDone)
-    //            yield return null;
-    //
-    //    // Fade into loading screen and start loading the levels
-    //    LevelManager.FadeIn();
-    //    instance.operations.Add(UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(levelIndex, UnityEngine.SceneManagement.LoadSceneMode.Additive));
-    //
-    //    foreach(var operation in instance.operations)
-    //        if (!operation.isDone)
-    //        {
-    //            Debug.Log(operation.progress);
-    //            yield return null;
-    //        }
-    //
-    //    // Unload the loading screen and fade out, then fade in again
-    //    instance.operations.Add(UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync((int)GameLevelIndex.LOADING_SCREEN));
-    //    LevelManager.FadeOut();
-    //    LevelManager.FadeIn();
-    //}
 
 }
