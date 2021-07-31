@@ -367,4 +367,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b7c3dbcdf7c2b7a46bc44491b0f3d92e, type: 2}
   - {fileID: 11400000, guid: ca4e8ad30c5d6bc43b5883954e4de895, type: 2}
   - {fileID: 11400000, guid: 7078a765b895dc643b9636850bc31b71, type: 2}
+  gameLvlDictiony:
+    m_keys: 0000000001000000020000000300000004000000
+    m_values:
+    - {fileID: 11400000, guid: 4b126362bb664914e9c98d2d000a9517, type: 2}
+    - {fileID: 11400000, guid: b23b43e902adb5640b900e55f9bf1a97, type: 2}
+    - {fileID: 11400000, guid: b7c3dbcdf7c2b7a46bc44491b0f3d92e, type: 2}
+    - {fileID: 11400000, guid: 7078a765b895dc643b9636850bc31b71, type: 2}
+    - {fileID: 11400000, guid: ca4e8ad30c5d6bc43b5883954e4de895, type: 2}
   sceneTransition: {fileID: 1608437504}

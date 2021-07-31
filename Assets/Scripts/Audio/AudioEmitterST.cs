@@ -19,6 +19,8 @@ public class AudioEventSTInstance
 
     private int length;
 
+    private bool paused = false;
+
     public AudioEventSTInstance(FMOD.Studio.EventInstance instance)
     {
         this.instance = instance;
@@ -37,7 +39,6 @@ public class AudioEventSTInstance
             parameters.Add(paramDescription.name, paramDescription.id);
             Debug.Log(paramDescription.name);
         }
-
     }
 
     public void Start()
@@ -86,22 +87,17 @@ public class AudioEventSTInstance
         return length;
     }
 
-    public void Pause()
+    public void SetPaused(bool paused, bool toggle = false, bool forceStart = true)
     {
         FMOD.Studio.PLAYBACK_STATE state;
         instance.getPlaybackState(out state);
 
-        if (state == FMOD.Studio.PLAYBACK_STATE.STOPPED)
+        if (state == FMOD.Studio.PLAYBACK_STATE.STOPPED && forceStart)
             instance.start();
         else if (IsPaused())
-            instance.setPaused(false);
+            instance.setPaused(paused);
         else
-            instance.setPaused(true);
-    }
-
-    public void SetPaused(bool paused)
-    {
-        instance.setPaused(paused);
+            instance.setPaused(paused);
     }
 
     public bool IsPaused()

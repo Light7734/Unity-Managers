@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Collections;
 using System;
 
+[Serializable]
 public enum GameLevelIndex
 {
-    PRE_MAIN_MENU, // SPLASH_SCREEN
+    PRE_MAIN_MENU,
     MAIN_MENU,
 
     LOADING_SCREEN,
@@ -22,18 +23,19 @@ public class GameManager : MonoBehaviour
 {
     private static GameManager instance = null;
 
+    private bool isLoadingLevel = false;
+
     [SerializeField] private List<GameLevel> gameLevels = new List<GameLevel>{};
-    private Dictionary<GameLevelIndex, GameLevel> gameLevelsDictionary = new Dictionary<GameLevelIndex, GameLevel> { };
+    private Dictionary<GameLevelIndex, GameLevel> gameLevelsDictionary = new Dictionary<GameLevelIndex, GameLevel> {};
+    [SerializeField] public GameLevelDictionary gameLvlDictiony;
 
     GameLevel currentGameLevel = null;
 
     private List<AsyncOperation> operations = new List<AsyncOperation> {};
     [SerializeField] private Animator sceneTransition = null;
 
-    private void Awake()
+    GameManager()
     {
-
-
         instance = this;
     }
 
@@ -63,6 +65,12 @@ public class GameManager : MonoBehaviour
 
     public static void LoadLevelImmidiate(GameLevelIndex index)
     {
+        if(!instance.isLoadingLevel)
+        {
+            Debug.LogWarning("[GameManager.LoadLevelImmidiate]: a level is currently being loaded");
+            return;
+        }
+
         instance.StartCoroutine(instance.LoadLevelImmidiateImpl(index));
     }
 
@@ -122,27 +130,14 @@ public class GameManager : MonoBehaviour
                 } catch (ArgumentException e) { continue; } /* Scene to unload is invalid */
 
             operations.Add(UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(currentGameLevel.fullPath));
-
-            loadingScreen.SetPhase(LoadingScreenPhase.Unloading, operations);
-
-            foreach (var operation1 in operations)
-                while (!operation1.isDone)
-                {
-                    Debug.Log("Async operation unload: " + operation1.progress);
-                    yield return null;
-                }
         }
 
         // load the requested level
-        operations = new List<AsyncOperation> {};
         operations.Add(UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(gameLevelsDictionary[index].fullPath, UnityEngine.SceneManagement.LoadSceneMode.Additive));
-        loadingScreen.SetPhase(LoadingScreenPhase.Loading, operations);
+        loadingScreen.SetOperations(operations);
 
         while (!operations[0].isDone)
-        {
-            Debug.Log("Async operation load: " + operations[0].progress);
             yield return null;
-        }
 
         // fade out of loading screen
         sceneTransition.PlayImmediate("FadeOut");

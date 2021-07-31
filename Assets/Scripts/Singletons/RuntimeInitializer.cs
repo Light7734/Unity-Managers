@@ -2,7 +2,7 @@
 
 class RuntimeInitializer
 {
-    // Order is from the top-most function to the bottom-most function
+    // order is from the top-most function to the bottom-most function
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void OnSubsystemRegistration()

@@ -1,8 +1,7 @@
-﻿using UnityEngine;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using UnityEngine;
 
 /// <summary> 
 ///     <para> An audio emitter specialized for sound effects. </para>
@@ -90,7 +89,7 @@ public class AudioEventFXInstance
 
         IntPtr data;
         instance.getUserData(out data);
-        
+
         ((Stack<FMOD.Studio.EventInstance>)GCHandle.FromIntPtr(data).Target).Push(instance);
 
         return FMOD.RESULT.OK;
@@ -134,7 +133,7 @@ public class AudioEventFXInstance
 
     public float GetParameter(string name)
     {
-        if(!parameters.ContainsKey(name))
+        if (!parameters.ContainsKey(name))
         {
             Debug.LogError("[AudioEmitterFX.GetParameter]: failed to find parameter with name \"" + name + '\"');
             return 0f;
@@ -142,12 +141,11 @@ public class AudioEventFXInstance
 
         return parameters[name].value;
     }
-
 }
 
 public class AudioEmitterFX : MonoBehaviour
 {
-    [SerializeField] 
+    [SerializeField]
     private AudioEmitterData data;
 
     private Dictionary<string, AudioEventFXInstance> events = new Dictionary<string, AudioEventFXInstance>();
@@ -162,5 +160,4 @@ public class AudioEmitterFX : MonoBehaviour
     {
         get { return events[name]; }
     }
-
 }

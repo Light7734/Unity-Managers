@@ -10,12 +10,6 @@ public struct GameTip
     public float duration;
 }
 
-public enum LoadingScreenPhase
-{
-    Unloading = 0,
-    Loading   = 1,
-}
-
 class LoadingScreenManager : MonoBehaviour
 {
     [Header("Progress")]
@@ -44,8 +38,6 @@ class LoadingScreenManager : MonoBehaviour
 
     private List<AsyncOperation> loadingOperations = new List<AsyncOperation>{};
 
-    LoadingScreenPhase currentPhase = LoadingScreenPhase.Unloading;
-
     private void Start()
     {
         isChangingTip = true;
@@ -73,7 +65,7 @@ class LoadingScreenManager : MonoBehaviour
             foreach (var operation in loadingOperations)
                 operationsProgress += operation.progress;
 
-            operationsProgress = ((int)currentPhase / 2f) + (operationsProgress / loadingOperations.Count / 2f);
+            operationsProgress = operationsProgress / loadingOperations.Count;
 
             progressBarImageMask.fillAmount = operationsProgress;
             progressBarPercent.text = (operationsProgress * 100f).ToString() + '%';
@@ -95,10 +87,9 @@ class LoadingScreenManager : MonoBehaviour
     private void ChangeGameTip()
     {
         isChangingTip = true;
+        tipTimerMask.fillAmount = 1.0f;
 
         tipTimerFill.color = Color.black;
-        
-        tipTimerMask.fillAmount = 1.0f;
 
         LeanTween.value(1f, 0f, tipFadeOut)
             .setOnUpdate((float _value) =>
@@ -117,7 +108,6 @@ class LoadingScreenManager : MonoBehaviour
                 {
                     tipTimerFill.color = new Color(_value, _value, _value, _value);
                     tipText.color = tipText.color.WithAlpha(_value);
-                    // tipText.color = tipText.color.WithAlpha(_value);
                 })
                 .setOnComplete(() =>
                 {
@@ -132,10 +122,9 @@ class LoadingScreenManager : MonoBehaviour
         return tips[Random.Range(0, tips.Count - 1)];
     }
 
-    public void SetPhase(LoadingScreenPhase phase, List<AsyncOperation> operations)
+    public void SetOperations(List<AsyncOperation> operations)
     {
-        currentPhase = phase;
-        this.loadingOperations = operations;
+        loadingOperations = operations;
     }
 
 }
