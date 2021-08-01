@@ -49,7 +49,6 @@ public abstract class SerializableDictionaryBase<TKey, TValue, TValueStorage> : 
 			m_keys = null;
 			m_values = null;
 		}
-
 	}
 
 	public void OnBeforeSerialize()
