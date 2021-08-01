@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ded8010d247b52a40a5d8b887d797bcc, type: 3}
   m_Name: MainMenu
   m_EditorClassIdentifier: 
-  index: 1
+  index: 2
   fullPath: Scenes/MainMenu
   tagIdentifier: MainMenu
   sections: []
