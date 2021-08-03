@@ -6,15 +6,15 @@ using System.Collections.Generic;
 public class GameLevel : ScriptableObject
 {
     [System.Serializable]
-    public struct GameLevelScetion
+    public struct Section
     {
         public string name;
         public string fullPath;
     }
 
-    [SerializeField] public GameLevelIndex index;
+    [SerializeField] public GameManager.LevelIndex index;
 
     [SerializeField] public string fullPath;
     [SerializeField] public string tagIdentifier;
-    [SerializeField] public List<GameLevelScetion> sections = new List<GameLevelScetion> {};
+    [SerializeField] public List<Section> sections = new List<Section> { };
 }

@@ -3,20 +3,19 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-[System.Serializable]
-public struct GameTip
+class LoadingScreen : MonoBehaviour
 {
-    public string content;
-    public float duration;
-}
+    [System.Serializable]
+    public struct Tip
+    {
+        public string content;
+        public float duration;
+    }
 
-class LoadingScreenManager : MonoBehaviour
-{
     [Header("Progress")]
 
     [SerializeField] private Image progressBarImageMask;
     [SerializeField] private TextMeshProUGUI progressBarPercent;
-
 
     [Header("Game Tips")]
 
@@ -26,35 +25,21 @@ class LoadingScreenManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI tipText;
 
     [Range(0.1f, 1.1f)]
-    [SerializeField] private float tipFadeIn = .2f, tipFadeOut = .4f;
+    [SerializeField] private float tipFadeIn, tipFadeOut;
 
-    // #todo: load tips from a file
-    // #todo: add level specific tips
-    [SerializeField] private List<GameTip> tips = new List<GameTip> { };
+    // #todo: add level/progress related tips
+    [SerializeField] private List<Tip> tips = new List<Tip> { };
 
-    private bool isChangingTip = false;
-    private float tipTimer = 0f;
-    private float currentTipDuration = 0f;
+    private bool isChangingTip = true;
+    private float currentTipDuration = .1f;
+    private float tipTimer;
 
     private List<AsyncOperation> loadingOperations = new List<AsyncOperation>{};
 
     private void Start()
     {
-        isChangingTip = true;
-        tipTimerMask.fillAmount = 1.0f;
-
-        GameTip tip = GetRandomTip();
-
-        currentTipDuration = tip.duration;
-        tipText.text = tip.content;
-
-        LeanTween.value(0f, 1f, tipFadeIn)
-            .setOnUpdate((float _value) =>
-            {
-                tipTimerFill.color = new Color(_value, _value, _value, _value);
-                tipText.color = tipText.color.WithAlpha(_value);
-
-            }).setOnComplete(() => { isChangingTip = false; });
+        tipText.text = "";
+        ChangeGameTip();
     }
 
     private void Update()
@@ -87,9 +72,10 @@ class LoadingScreenManager : MonoBehaviour
     private void ChangeGameTip()
     {
         isChangingTip = true;
-        tipTimerMask.fillAmount = 1.0f;
 
+        tipTimerMask.fillAmount = 1.0f;
         tipTimerFill.color = Color.black;
+
 
         LeanTween.value(1f, 0f, tipFadeOut)
             .setOnUpdate((float _value) =>
@@ -98,7 +84,7 @@ class LoadingScreenManager : MonoBehaviour
             })
             .setOnComplete(() =>
             {
-                GameTip tip = GetRandomTip();
+                Tip tip = GetRandomTip();
 
                 tipText.text = tip.content;
                 currentTipDuration = tip.duration;
@@ -116,7 +102,7 @@ class LoadingScreenManager : MonoBehaviour
             });
     }
 
-    private GameTip GetRandomTip()
+    private Tip GetRandomTip()
     {
         // #todo: don't choose previously shown tips
         return tips[Random.Range(0, tips.Count - 1)];

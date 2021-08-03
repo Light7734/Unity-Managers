@@ -1,2 +1,2 @@
 ﻿[System.Serializable]
-public class GameLevelDictionary : SerializableDictionary<GameLevelIndex, GameLevel> {}
+public class GameLevelDictionary : SerializableDictionary<GameManager.LevelIndex, GameLevel> {}

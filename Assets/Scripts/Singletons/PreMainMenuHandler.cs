@@ -14,6 +14,6 @@ public class PreMainMenuHandler : MonoBehaviour
     void Update()
     {
         if (videoPlayer.frame >= (long)videoPlayer.frameCount - 1)
-            GameManager.LoadLevelImmediate(GameLevelIndex.MAIN_MENU, true);
+            GameManager.LoadLevelImmediate(GameManager.LevelIndex.MAIN_MENU, true);
     }
 }
